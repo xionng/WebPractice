@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+  <%- include('menu.html') %>
+
+  <nav class="navbar navbar-expand-lg bg-body-tertiary"></nav>
+
+  <h1>홈 입니다</h1>
+
+  <% if (user) { %>
+    <h3>반갑습니다. <%= user.userid %> 님.</h3>
+    <a href="/logout">로그아웃</a>
+  <% } else { %>
+    <h3>로그인 해주세요.</h3>
+    <p></p>
+    <button class="w-100 btn btn-warning login"><b>로그인</b></button>
+    <p></p>
+    <button class="w-100 btn btn-outline-success signup"><b>회원가입</b></button>
+  <% } %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script>
+    $('.login').click(function(e) {
+      location.href = "/login"; // 🔥 오타 수정
+    });
+    $('.signup').click(function(e) {
+      location.href = "/signup"; // 🔥 오타 수정
+    });
+  </script>
+</body>
+</html>

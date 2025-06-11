@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enter</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+  <%- include('menu.html') %>
+
+  <nav class="navbar navbar-expand-lg bg-body-tertiary"></nav>
+
+  <div class="container mt-4">
+    <!-- ✅ 게시글 저장 form (파일 업로드는 AJAX로 별도로 처리!) -->
+    <form action="/save" method="post">
+      <div class="form-group">
+        <label>제목</label>
+        <input type="text" name="title" class="form-control">
+      </div>
+      <p></p>
+      <div class="form-group">
+        <label>내용</label>
+        <textarea name="content" rows="10" class="form-control"></textarea>
+      </div>
+      <p></p>
+      <div class="form-group">
+        <label>작성일</label>
+        <input type="date" class="form-control" name="someDate">
+      </div>
+      <p></p>
+      <!-- 🔥 AJAX로 첨부된 파일 경로를 여기에 숨은 input으로 저장 -->
+      <!-- AJAX로 동적으로 <input type="hidden" name="uploadedPath"> 추가됨 -->
+      <button type="submit" class="btn btn-warning" style="float:right;">저장</button>
+    </form>
+  </div>
+
+  <!-- ✅ AJAX 파일 첨부용 폼 (저장과 별개) -->
+  <div class="container mt-3">
+    <form id="photoForm" enctype="multipart/form-data">
+      <input type="file" name="picture" accept="image/*" class="btn btn-outline-primary" />
+      <button type="button" onclick="uploadPhoto()" class="btn btn-outline-primary">첨부</button>
+    </form>
+    <div id="uploadResult" class="mt-2"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script>
+    function uploadPhoto() {
+      const formData = new FormData(document.getElementById('photoForm'));
+
+      fetch('/photo', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('업로드 결과:', data);
+        document.getElementById('uploadResult').innerText = data.message + " 경로: " + data.path;
+
+        // 🔥 숨은 input을 /save form에 동적으로 추가
+        let saveForm = document.querySelector('form[action="/save"]');
+        let hiddenInput = saveForm.querySelector('input[name="uploadedPath"]');
+
+        if (!hiddenInput) {
+          hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.name = 'uploadedPath';
+          saveForm.appendChild(hiddenInput);
+        }
+
+        hiddenInput.value = data.path; // AJAX로 받은 파일 경로 저장
+      })
+      .catch(err => {
+        console.error(err);
+        alert('첨부 실패!');
+      });
+    }
+  </script>
+</body>
+</html>
